@@ -1,0 +1,323 @@
+:root {
+
+    /* ---------- COLORS ---------- */
+
+    --bg-primary: #0f172a;
+    --bg-secondary: #111827;
+    --bg-card: rgba(255,255,255,0.04);
+
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+
+    --green: #4ade80;
+    --red: #f87171;
+    --yellow: #facc15;
+    --blue: #3b82f6;
+
+    --border-light: var(--border-light);
+
+    --shadow-main: 0 8px 30px rgba(0,0,0,0.25);
+
+    --radius-main: 20px;
+}
+
+/* =========================
+   REUSABLE COMPONENTS
+========================= */
+
+.glass-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-main);
+    box-shadow: var(--shadow-main);
+}
+  
+  
+/* ---------- MAIN ---------- */
+
+.stApp {
+    background: linear-gradient(to bottom right, #0f172a, #111827);
+    color: var(--text-primary);
+}
+
+section[data-testid="stSidebar"] {
+    background-color: var(--bg-secondary);
+}
+
+
+/* ---------- TITLE ---------- */
+
+.main-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 0;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+
+
+/* ---------- UPLOAD BOX ---------- */
+
+.upload-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 1.5rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+/* ---------- CANDIDATE CARD ---------- */
+
+.candidate-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border-light);
+    border-radius: 24px;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+.best-candidate {
+
+border: 2px solid rgba(255,215,0,0.45);
+
+box-shadow:
+    0 0 25px rgba(255,215,0,0.15),
+    0 8px 30px rgba(0,0,0,0.25);
+
+    position: relative;
+}
+
+/* ---------- SCORE BADGE ---------- */
+
+.score-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.strong {
+    background-color: rgba(34,197,94,0.2);
+    color: var(--green);
+    border: 1px solid rgba(74,222,128,0.4);
+}
+
+.moderate {
+    background-color: rgba(250,204,21,0.15);
+    color: #facc15;
+    border: 1px solid rgba(250,204,21,0.3);
+}
+
+.weak {
+    background-color: rgba(239,68,68,0.15);
+    color: var(--red);
+    border: 1px solid rgba(248,113,113,0.3);
+}
+
+
+/* ---------- METRIC BOX ---------- */
+
+.metric-box {
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid var(--border-light);
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+
+/* ---------- SKILL TAGS ---------- */
+
+.skill-tag {
+    display: inline-block;
+    padding: 0.45rem 0.9rem;
+    margin: 0.3rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.matched {
+    background-color: rgba(34,197,94,0.15);
+    color: var(--green);
+    border: 1px solid rgba(74,222,128,0.25);
+}
+
+.missing {
+    background-color: rgba(239,68,68,0.15);
+    color: var(--red);
+    border: 1px solid rgba(248,113,113,0.25);
+}
+
+
+/* ---------- INSIGHTS ---------- */
+
+.insight-box {
+    background: rgba(59,130,246,0.12);
+    border-left: 4px solid #3b82f6;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-top: 0.7rem;
+    margin-bottom: 0.7rem;
+    color: var(--text-primary);
+}
+
+
+/* ---------- BUTTON ---------- */
+
+.stButton>button {
+    background: linear-gradient(to right, #2563eb, #7c3aed);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 14px;
+    padding: 0.8rem 2rem;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.stButton>button:hover {
+    transform: scale(1.03);
+    opacity: 0.95;
+}
+
+[data-testid="stHeader"] {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+div[data-testid="stToolbar"] {
+    top: 0.5rem;
+    right: 1rem;
+}
+
+/* ---------- FILE UPLOADER ---------- */
+
+[data-testid="stFileUploader"] {
+    width: 100%;
+}
+
+[data-testid="stFileUploader"] section {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px dashed rgba(255,255,255,0.18) !important;
+    border-radius: 18px !important;
+    padding: 1rem !important;
+}
+
+/* Remove weird top strip */
+[data-testid="stFileUploader"] section > div:first-child {
+    display: none !important;
+}
+
+/* Upload instructions text */
+[data-testid="stFileUploader"] small,
+[data-testid="stFileUploader"] span,
+[data-testid="stFileUploader"] p,
+[data-testid="stFileUploader"] label {
+    color: white !important;
+}
+
+/* Uploaded file pill */
+[data-testid="stFileUploaderFile"] {
+    background: var(--border-light) !important;
+    border-radius: 12px !important;
+    padding: 0.4rem 0.7rem !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Uploaded filename */
+[data-testid="stFileUploaderFileName"] {
+    color: white !important;
+    font-weight: 500 !important;
+}
+
+/* Browse button */
+[data-testid="stFileUploader"] button {
+    background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+}
+
+/* ---------- SKILL TABLE ---------- */
+
+.skill-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 14px;
+    overflow: hidden;
+
+    background: rgba(17, 24, 39, 0.95);
+
+    border: 1px solid var(--border-light);
+}
+
+.skill-table th,
+.skill-table td {
+
+    color: #ffffff !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+}
+
+.skill-table th {
+
+    background: #1e293b !important;
+
+    font-weight: 700;
+
+    padding: 1rem;
+}
+
+.skill-table td {
+
+    background: #111827 !important;
+
+    padding: 0.9rem;
+}
+
+.skill-table tr:hover {
+    background: var(--bg-card);
+}
+
+.match-status {
+    color: #4ade80 !important;
+    font-weight: 700 !important;
+}
+
+.missing-status {
+    color: #f87171 !important;
+    font-weight: 700 !important;
+}
+
+/* ---------- HIDE STREAMLIT ---------- */
+
+footer {visibility: hidden;}
