@@ -4,11 +4,20 @@ import pandas as pd
 from utils.pdf_parser import extract_text_from_pdf
 from utils.preprocessing import clean_text
 from utils.ranking import rank_resumes
+from pathlib import Path
+import streamlit as st
 
 
-# ---------------------------------------------------
+def load_css():
+    css_path = Path(__file__).parent / "styles" / "main.css"
+
+    with open(css_path, encoding="utf-8") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+load_css()
+
+
 # PAGE CONFIG
-# ---------------------------------------------------
 
 st.set_page_config(
     page_title="Resume Matcher",
@@ -16,19 +25,10 @@ st.set_page_config(
     layout="wide"
 )
 
-def load_css():
-    with open("styles/main.css") as f:
-        st.markdown(
-            f"<style>{f.read()}</style>",
-            unsafe_allow_html=True
-        )
-
-load_css()
 
 
-# ---------------------------------------------------
+
 # HELPER FUNCTIONS
-# ---------------------------------------------------
 
 
 def get_fit_label(score):
@@ -66,9 +66,8 @@ def generate_skill_table(result):
     return rows
 
 
-# ---------------------------------------------------
+
 # HEADER
-# ---------------------------------------------------
 
 st.markdown(
     """
@@ -82,9 +81,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# ---------------------------------------------------
+
 # SIDEBAR
-# ---------------------------------------------------
 
 with st.sidebar:
 
@@ -142,9 +140,8 @@ with st.sidebar:
         )
 
 
-# ---------------------------------------------------
+
 # INPUT SECTION
-# ---------------------------------------------------
 
 # st.markdown("<div class='upload-box'>", unsafe_allow_html=True)
 
@@ -165,9 +162,8 @@ with col2:
 
 
 
-# ---------------------------------------------------
+
 # ANALYZE BUTTON
-# ---------------------------------------------------
 
 if st.button("🚀 Analyze Candidates"):
 
@@ -200,9 +196,8 @@ if st.button("🚀 Analyze Candidates"):
         st.success("Analysis Complete")
 
 
-        # ---------------------------------------------------
+
         # RESULTS
-        # ---------------------------------------------------
 
         st.markdown("## 🏆 Ranked Candidates")
 

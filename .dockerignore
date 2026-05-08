@@ -1,0 +1,37 @@
+<!-- without dockerignore file Docker copies everthing into the image
+prevent unnecessary files from entering Docker image -->
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environments
+.venv/
+venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment Variables
+.env
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Monitoring Data
+grafana-data/
+prometheus-data/
