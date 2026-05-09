@@ -196,3 +196,38 @@ http://<EC2-IP>:8501
 ```
 
 #### Now our application is containerized and deployed on cloud using an EC2 instance. Cool :)
+
+
+## Phase 3: Jenkins Installation
+### Jenkins is an automation server used  for CI/CD pipelines, automated build and deployments
+#### Step 1: Install Java and add Jenkins repository
+#### Java runtime is required for running Jenkins. 
+- Install Java
+```
+sudo apt install openjdk-21-jdk -y
+```
+- Add Jenkins GPG key
+```
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key | sudo tee \
+  /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+```
+Why?
+- Ubuntu verifies packages before installing them.
+- This key proves:
+    - the package is really from Jenkins
+    - it hasn’t been tampered with
+- Without this key:
+    - apt will not trust the Jenkins packages.
+
+- Add Jenkins repository
+```
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+```
+Why?
+- By default, Ubuntu repositories do not contain the latest Jenkins version.
+- After adding this repository, apt knows:
+    - where to download Jenkins from
+    - where to check for future updates
+
