@@ -59,4 +59,25 @@ http://localhost:8501
 ---
 
 
-## Phase 2: EC2 Deployment + Jenkins CI/CD
+## Phase 2: EC2 Deployment
+### The objective of this phase is to deploy our application onto an EC2 instance so that it can be run on the cloud
+### Step 1: Creating and launching the EC2 instance
+- An EC2 instance is just a virtual machine running on the cloud
+- This step involves starting and launching the ec2 instance for our application
+- We proceed by providing the required permissions and resources to the instance  
+
+EC2 configuration used:  
+| Setting      | Value        |
+|:-------------|:-------------|
+| Instance type | t3.small     |
+| Stroage      | 50GB gp3     |
+| OS           | Ubuntu       |
+| Authentication | SSH key pair |  
+  
+
+Security group configuration:
+| Port      | Purpose        |
+|:-------------|:-------------|
+| 22 | SSH     |
+| 8080      | Jenkins     |
+| 8501           | Streamlit|
