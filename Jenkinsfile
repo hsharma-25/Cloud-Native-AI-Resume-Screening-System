@@ -3,12 +3,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/hsharma-25/Cloud-Native-AI-Resume-Screening-System.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t resumeiq .'
