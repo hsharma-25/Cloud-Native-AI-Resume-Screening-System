@@ -198,8 +198,8 @@ http://<EC2-IP>:8501
 #### Now our application is containerized and deployed on cloud using an EC2 instance. Cool :)
 
 
-## Phase 3: Jenkins Installation
-### Jenkins is an automation server used  for CI/CD pipelines, automated build and deployments
+## Phase 3: Jenkins Installation + Jenkins pipeline construction + Docker Hub integration
+### Jenkins is an automation server used  for CI/CD pipelines, automated build and deployments.
 #### Step 1: Install Java and add Jenkins repository
 #### Java runtime is required for running Jenkins. 
 - Install Java
@@ -231,3 +231,114 @@ Why?
     - where to download Jenkins from
     - where to check for future updates
 
+#### Step 2: Install Jenkins
+- Update apt
+```
+sudo apt update 
+```
+- Install Jenkins
+```
+sudo apt install jenkins -y
+```
+- Start and enable jenkins
+```
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+```
+
+#### Step 3: Further Jenkins setup through Jenkins UI
+- Access Jenkins through browser
+```
+http://<EC2-IP>:8080
+```
+- Retrieve initial admin password
+```
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+- On next step, click on intall suggested plug-ins
+- Jenkins will install all required plug-ins by itself
+Jenkins-Docker integration
+- Jenkins runs under jenkins user
+- This user requires Docker permissions
+```
+sudo usermod -aG docker jenkins
+```
+- To apply new permissions, restart jenkins
+```
+sudo systemctl restart jenkins
+```
+- Verify Docker access
+```
+sudo su - jenkins
+docker ps
+```
+- The above command verifies that Jenkins can communicate with Docker daemon
+
+#### Step 4: Creating Jenkins pipeline
+#### The new job in Jenkins was created as a pipeline. In this method, the complete pipeline is defined as code in a file called Jenkinsfile. Futher we perform SCM (Source Code Management) integration to connect the jenkins pipeline to our GitHub repo.
+- Create the jenkinsfile
+- Push file to repo
+```
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t hsharma25/resumeiq:latest .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push hsharma25/resumeiq:latest'
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                sh 'docker stop resumeiq-container || true'
+                sh 'docker rm resumeiq-container || true'
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh '''
+                docker run -d \
+                    --name resumeiq-container \
+                    -p 8501:8501 \
+                    hsharma25/resumeiq:latest
+                '''
+            }
+        }
+    }
+}
+```
+Pipeline stage explanation:
+| Stage              | Purpose                      |
+| ------------------ | ---------------------------- |
+| Build Docker Image | Creates updated Docker image |
+| Push Docker Image  | Uploads image to Docker Hub  |
+| Stop Old Container | Removes previous deployment  |
+| Run New Container  | Deploys latest application   |
+
+- Click on "Build Now" in jenkins to start the whole process
+- Observe the console to see how each step is executed
+- Each step previously done manually like Docker build and Docker start is automated by Jenkins now
+
+#### Step 5: Integrating Docker Hub
+#### Similar to how GitHub stores source code, Docker Hub is a container registry to store images. From now on, Jenkins will build image -> push it to Docker Hub and deployments will pull image from Docker Hub when required
+- On EC2, log in to Docker hub
+```
+docker login
+```
+- Build tagged image
+```
+docker build -t hsharma25/resumeiq:latest .
+```
+- Push image to Docker hub
+```
+docker push hsharma25/resumeiq:latest
+```
