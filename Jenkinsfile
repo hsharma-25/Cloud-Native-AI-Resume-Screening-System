@@ -5,7 +5,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t resumeiq .'
+                sh 'docker build -t hsharma25/resumeiq:latest .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push hsharma25/resumeiq:latest'
             }
         }
 
@@ -18,7 +24,12 @@ pipeline {
 
         stage('Run New Container') {
             steps {
-                sh 'docker run -d --name resumeiq-container -p 8501:8501 resumeiq'
+                sh '''
+                docker run -d \
+                    --name resumeiq-container \
+                    -p 8501:8501 \
+                    hsharma25/resumeiq:latest
+                '''
             }
         }
     }
