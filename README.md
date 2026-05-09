@@ -7,7 +7,7 @@
 - These instructions are defined in the Dockerfile. A Docker file executes instructions, copies various files etc.. 
 - To ensure no unnecessary files are copied a .dockerignore file is created  
 Example:
-```gitignore
+```dockerignore
 __pycache__/
 .venv/
 .git/
@@ -22,7 +22,9 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    -r requirements.txt
 
 COPY . .
 
@@ -80,4 +82,107 @@ Security group configuration:
 |:-------------|:-------------|
 | 22 | SSH     |
 | 8080      | Jenkins     |
-| 8501           | Streamlit|
+| 8501           | Streamlit|  
+  
+
+### Step 2: Connecting to EC2 instance(SSH)
+- Use SSH to securely connect to EC2 instance  
+
+
+Command:
+```bash
+ssh -i <key.pem> ubuntu@<EC2-PUBLIC-IP>
+```
+
+- Before installing anything, update packages  
+
+
+Command:
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+### Step 3: Installing Docker and Containerization
+### Docker helps us in containerizing an application. Containerization packages the application with its dependencies into isolated containers. This ensures that the application runs same everywhere and on evey device. 
+- Install Docker on EC2 instance
+```bash
+sudo apt install docker.io -y
+```
+
+- Start and enable Docker using the following commands
+- These commands start Docker and ensure Docker restarts on reboot
+```bash
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+- Docker requires sudo access
+- Allow normal users to run Docker commands
+```bash
+sudo usermod -aG docker ubuntu
+```
+- Apply changes
+```bash
+newgrp docker
+```
+
+- Now create the Dockerfile
+- Use the same Dockerfile we created intially 
+```Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    -r requirements.txt
+
+COPY . .
+
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app/main.py", "--server.address=0.0.0.0"]
+```
+Dockerfile explanation:
+| Instruction | Purpose                          |
+| ----------- | -------------------------------- |
+| FROM        | Base Python image                |
+| WORKDIR     | Sets container working directory |
+| COPY        | Copies project files             |
+| RUN         | Installs dependencies            |
+| EXPOSE      | Exposes Streamlit port           |
+| CMD         | Starts application               |
+
+
+An extra index was used:
+```
+--extra-index-url https://download.pytorch.org/whl/cpu
+```
+The purpose:
+- Installs CPU-only PyTorch
+- Avoids unnecessary CUDA/GPU libraries
+- Reduces image size
+- Speeds up CI/CD builds
+
+The .dockerignore file:
+- Use the same .dockerignore file from earlier
+- Helps reduces Docker build context size
+- Pevents unnecessary files from entering image
+
+Building the Docker image and running the Docker container
+- Use the same commands we used for local containerization
+```
+docker build -t resumeiq .
+```
+```
+docker run -d --name resumeiq-container -p 8501:8501 resumeiq
+```
+To access the application which is now running on the EC2 instance  
+Type in browser:
+```
+http://<EC2-IP>:8501
+```
+
+#### Now our application is containerized and deployed on cloud using an EC2 instance. Cool :)
