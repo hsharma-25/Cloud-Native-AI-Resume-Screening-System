@@ -71,8 +71,8 @@ http://localhost:8501
 EC2 configuration used:  
 | Setting      | Value        |
 |:-------------|:-------------|
-| Instance type | t3.small     |
-| Stroage      | 50GB gp3     |
+| Instance type | m7i-flex.large     |
+| Storage      | 50GB gp3     |
 | OS           | Ubuntu       |
 | Authentication | SSH key pair |  
   
@@ -344,7 +344,7 @@ docker push hsharma25/resumeiq:latest
 ```
 
 ## Phase 4: Kubernetes Orchestration
-### Docker alone can not handle automatic recovery, scaling, orchestration, cluster management etc.. Kubernetes solves this by managing containers, deployments, networking, self-healing and scaling
+### Docker alone can not handle automatic recovery, scaling, orchestration, cluster management etc.. Kubernetes solves this by managing containers, deployments, networking, self-healing and scaling. This phase focuses on installing Kubernetes, defining deployment and service manifests and integrating K8s with the Jenkins pipeline
 
 #### Step 1: Install K3s
 #### We'll continue by integrating Kubernetes through K3s. Other methods like using minikube could have been used, but K3s proves to be a better option sice it provides lower RAM usage, lower CPU overhead, and fewer operational issues. 
@@ -363,4 +363,174 @@ K3s installs:
 - kubelet
 - container runtime
 - networking
-- kubectl
+- kubectl  
+  
+Verify K3s service
+```
+sudo systemctl status k3s
+```
+Verify Kubernetes nodes
+```
+sudo kubectl get nodes
+```
+Purpose:
+- verifies cluster node readiness
+- confirms Kubernetes control plane functionality  
+
+#### Step 2: Creating deployment.yml file
+#### Kubernetes uses declarative infrastructure instead of manually running containers. The desired infrastructure state is defined through YAML manifests, particularly the deployment.yaml file. Kubernetes continuously ensures actual system state matches declared state.
+
+- Create the deployment.yaml file 
+```
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: resumeiq-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: resumeiq
+
+  template:
+    metadata:
+      labels:
+        app: resumeiq
+
+    spec:
+      containers:
+      - name: resumeiq-container
+        image: hsharma25/resumeiq:latest
+
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8501
+```
+Explanation:
+| Field           | Purpose                     |
+| --------------- | --------------------------- |
+| apiVersion      | Kubernetes API version      |
+| kind            | Type of Kubernetes resource |
+| metadata        | Resource identification     |
+| replicas        | Desired pod count           |
+| selector        | Pod matching labels         |
+| template        | Pod definition              |
+| image           | Docker image source         |
+| imagePullPolicy | Always fetch latest image   |
+| containerPort   | Exposed application port    |
+
+#### Step 3: Kubernetes service
+#### K8s service ensures consistent networking and load balancing. All required states are defined in the service.yaml file
+- Create service.yaml file
+```
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: resumeiq-service
+
+spec:
+  type: NodePort
+
+  selector:
+    app: resumeiq
+
+  ports:
+    - port: 8501
+      targetPort: 8501
+      nodePort: 30007
+```
+Explanation:
+| Field          | Purpose                  |
+| -------------- | ------------------------ |
+| kind: Service  | Creates networking layer |
+| type: NodePort | Exposes app externally   |
+| selector       | Maps service to pods     |
+| port           | Service port             |
+| targetPort     | Container port           |
+| nodePort       | External EC2 port        |
+
+#### Step 4: Deploy kubernetes resources
+- Apply deployment
+```
+sudo kubectl apply -f k8s/deployment.yaml
+```
+- Apply service
+```
+sudo kubectl apply -f k8s/service.yaml
+```
+- Access the application using
+```
+http://<ELASTIC-IP>:30007
+```
+
+#### Step 5: Jenkins and Kubernetes integration
+#### We'll enable Jenkins CI/CD pipeline to communicate with Kubernetes cluster, trigger rolling deployments, automate Kubernetes re-deployment process
+- Firstly, Jenkins needs ability to execute kubectl commands
+- For this, we need to update the Kubernetes configuration file
+- The file is stored at ```/etc/rancher/k3s/k3s.yaml```
+- Copy kubernetes congig for Jenkins
+```
+sudo cp /etc/rancher/k3s/k3s.yaml /var/lib/jenkins/kubeconfig
+```
+- Configure KUBECONFIG environment variable
+- Open ```sudo systemctl edit jenkins```  
+
+Add:
+```
+[Service]
+Environment="KUBECONFIG=/var/lib/jenkins/kubeconfig"
+```
+- "KUBECONFIG"environment variable tells kubectl which Kubernetes configuration file to use
+- Without this, Jenkins cannot communicate with Kubernetes cluster.
+- Reload Jenkins service
+```
+sudo systemctl daemon-reload
+sudo systemctl restart jenkins
+```
+- Confirm Jenkins-Kubernetes integration 
+```
+sudo su - jenkins
+kubectl get nodes
+```
+- Confirms Jenkins user can access Kubernetes cluster  
+
+**Important**: Update the old Jenkins pipeline:
+```
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t hsharma25/resumeiq:latest .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push hsharma25/resumeiq:latest'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl rollout restart deployment resumeiq-deployment'
+            }
+        }
+    }
+}
+```
+The line:
+```
+kubectl rollout restart deployment resumeiq-deployment
+```
+Triggers:
+- old pod termination
+- new pod creation
+- deployment using latest Docker image
