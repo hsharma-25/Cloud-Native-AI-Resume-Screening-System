@@ -15,21 +15,9 @@ pipeline {
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh 'docker stop resumeiq-container || true'
-                sh 'docker rm resumeiq-container || true'
-            }
-        }
-
-        stage('Run New Container') {
-            steps {
-                sh '''
-                docker run -d \
-                    --name resumeiq-container \
-                    -p 8501:8501 \
-                    hsharma25/resumeiq:latest
-                '''
+                sh 'sudo kubectl rollout restart deployment resumeiq-deployment'
             }
         }
     }
