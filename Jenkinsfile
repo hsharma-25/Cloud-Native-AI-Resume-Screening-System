@@ -17,7 +17,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'sudo kubectl rollout restart deployment resumeiq-deployment'
+                sh 'kubectl rollout restart deployment resumeiq-deployment'
             }
         }
     }
