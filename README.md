@@ -342,3 +342,25 @@ docker build -t hsharma25/resumeiq:latest .
 ```
 docker push hsharma25/resumeiq:latest
 ```
+
+## Phase 4: Kubernetes Orchestration
+### Docker alone can not handle automatic recovery, scaling, orchestration, cluster management etc.. Kubernetes solves this by managing containers, deployments, networking, self-healing and scaling
+
+#### Step 1: Install K3s
+#### We'll continue by integrating Kubernetes through K3s. Other methods like using minikube could have been used, but K3s proves to be a better option sice it provides lower RAM usage, lower CPU overhead, and fewer operational issues. 
+- Stop and remove current running container
+```
+docker stop resumeiq-container
+docker rm resumeiq-container
+```
+- Install K3s
+```
+curl -sfL https://get.k3s.io | sh -
+```
+K3s installs:
+- Kubernetes API server
+- scheduler
+- kubelet
+- container runtime
+- networking
+- kubectl
