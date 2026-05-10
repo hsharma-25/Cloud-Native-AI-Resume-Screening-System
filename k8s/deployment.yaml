@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: resumeiq-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: resumeiq
+
+  template:
+    metadata:
+      labels:
+        app: resumeiq
+
+    spec:
+      containers:
+      - name: resumeiq-container
+        image: hsharma25/resumeiq:latest
+
+        ports:
+        - containerPort: 8501
