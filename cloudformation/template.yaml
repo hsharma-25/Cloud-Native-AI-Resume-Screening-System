@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: ResumeIQ DevOps Project Infrastructure
+
+Resources:
+
+  ResumeIQSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ResumeIQ project
+
+      SecurityGroupIngress:
+
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+        - IpProtocol: tcp
+          FromPort: 30007
+          ToPort: 30007
+          CidrIp: 0.0.0.0/0
+
+        - IpProtocol: tcp
+          FromPort: 30244
+          ToPort: 30244
+          CidrIp: 0.0.0.0/0
+
+  ResumeIQInstance:
+    Type: AWS::EC2::Instance
+
+    Properties:
+      ImageId: ami-0c02fb55956c7d316
+      InstanceType: m7i-flex.large
+
+      SecurityGroupIds:
+        - !Ref ResumeIQSecurityGroup
+
+      Tags:
+        - Key: Name
+          Value: ResumeIQ-CloudFormation-Server
