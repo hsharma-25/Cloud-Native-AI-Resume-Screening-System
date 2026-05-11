@@ -1,3 +1,33 @@
+## Contents
+- [Phase 1: Docker](#phase-1-docker)  
+    - [Step 1: The Dockerfile and .dockerignore](#step-1-the-dockerfile-and-dockerignore)  
+    - [Step 2: Building the Docker image](#step-2-building-the-docker-image)
+    - [Step 3: Running the Docker container](#step-3-running-the-docker-container)
+    - [Step 4: Accessing the application](#step-4-accessing-the-application)
+- [Phase 2: EC2 Deployment + Containerization](#phase-2-ec2-deployment--containerization)
+    - [Step 1: Creating and launching the EC2 instance](#step-1-creating-and-launching-the-ec2-instance)
+    - [Step 2: Connecting to EC2 instance(SSH)](#step-2-connecting-to-ec2-instance-ssh)
+    - [Step 3: Installing git and cloning the repo into the instance](#step-3-installing-git-and-cloning-the-repo-into-the-instance)
+    - [Step 4: Installing Docker and Containerization](#step-4-installing-docker-and-containerization)
+- [Phase 3: Jenkins Installation + Jenkins pipeline construction + Docker Hub integration](#phase-3-jenkins-installation--jenkins-pipeline-construction--docker-hub-integration)
+    - [Step 1: Install Java and add Jenkins repository](#step-1-install-java-and-add-jenkins-repository)
+    - [Step 2: Install Jenkins](#step-2-install-jenkins)
+    - [Step 3: Further Jenkins setup through Jenkins UI](#step-3-further-jenkins-setup-through-jenkins-ui)
+    - [Step 4: Creating Jenkins pipeline](#step-4-creating-jenkins-pipeline)
+    - [Step 5: Integrating Docker Hub](#step-5-integrating-docker-hub)
+- [Phase 4: Kubernetes Orchestration](#phase-4-kubernetes-orchestration)
+    - [Step 1: Install K3s](#step-1-install-k3s)
+    - [Step 2: Creating deployment.yml file](#step-2-creating-deploymentyml-file)
+    - [Step 3: Kubernetes service](#step-3-kubernetes-service)
+    - [Step 4: Deploy kubernetes resources](#step-4-deploy-kubernetes-resources)
+    - [Step 5: Jenkins and Kubernetes integration](#step-5-jenkins-and-kubernetes-integration)
+- [Phase 5: Monitoring and Visualization with Prometheus and Grafana](#phase-5-monitoring-and-visualization-with-prometheus-and-grafana)
+    - [Step 1: Install Helm](#step-1-install-helm)
+    - [Step 2: Install kube-prometheus-stack](#step-2-install-kube-prometheus-stack)
+    - [Step 3: Expose Grafana using NodePort](#step-3-expose-grafana-using-nodeport)
+    - [Step 4: Access Grafana dashboard](#step-4-access-grafana-dashboard)
+
+
 ## Phase 1: Docker
 ### Docker helps in containerizing an application which ensures that the application runs consistently across different environments such as local machines, cloud servers, CI/CD pipelines, and Kubernetes clusters.
 ### In this step we write the Dockerfile, .dockerignore file, build the image from the Dockerfile and run our container off of the built image
@@ -84,7 +114,7 @@ Security group configuration:
 | 8501           | Streamlit|  
   
 
-#### Step 2: Connecting to EC2 instance(SSH)
+#### Step 2: Connecting to EC2 instance (SSH)
 - Use SSH to securely connect to EC2 instance  
 
 
