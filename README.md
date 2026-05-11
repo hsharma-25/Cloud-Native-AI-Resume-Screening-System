@@ -550,3 +550,46 @@ Triggers:
 | Node Exporter      | Node-level metrics         |
 | kube-state-metrics | Kubernetes object metrics  |
 
+#### Step 1: Install Helm
+#### What is Helm?
+Helm is a package manager for Kubernetes. It simplifies Kubernetes application deployment using Helm Charts. A Helm chart is a pre-configured Kubernetes application template.
+```
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+```
+- Add Prometheus Helm repository. 
+- Purpose: adds official Prometheus Helm chart repository
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+```
+- Update Helm repositories
+- Purpose: downloads latest Helm chart metadata
+```
+helm repo update
+```
+- Create monitoring namespace
+- Purpose: isolates monitoring resources inside Kubernetes
+```
+sudo kubectl create namespace monitoring
+```
+#### What is a Kubernetes Namespace?
+Namespaces logically separate Kubernetes resources.
+Examples:
+- default
+- kube-system
+- monitoring
+
+This improves organization and resource management.
+
+- Install kube-prometheus-stack
+
+Purpose: installs complete monitoring stack
+
+Components installed:
+- Prometheus
+- Grafana
+- Alertmanager
+- Node Exporter
+- kube-state-metrics
+```
+KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring
+```
