@@ -566,12 +566,11 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 ```
 helm repo update
 ```
+
 - Create monitoring namespace
 - Purpose: isolates monitoring resources inside Kubernetes
-```
-sudo kubectl create namespace monitoring
-```
-#### What is a Kubernetes Namespace?
+
+What is a Kubernetes Namespace?  
 Namespaces logically separate Kubernetes resources.
 Examples:
 - default
@@ -579,10 +578,12 @@ Examples:
 - monitoring
 
 This improves organization and resource management.
+```
+sudo kubectl create namespace monitoring
+```
 
-- Install kube-prometheus-stack
-
-Purpose: installs complete monitoring stack
+#### Step 2: Install kube-prometheus-stack
+- Purpose: installs complete monitoring stack
 
 Components installed:
 - Prometheus
@@ -593,3 +594,54 @@ Components installed:
 ```
 KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring
 ```
+
+- Verify monitoring pods
+- Checks monitoring stack deployment
+```
+sudo kubectl get pods -n monitoring
+```
+
+- Verify monitoring services
+```
+sudo kubectl get svc -n monitoring
+```
+
+#### Step 3: Expose Grafana using NodePort
+#### Grafana is initially accessible only inside the Kubernetes cluster. To access Grafana externally, a NodePort service was created.
+- Command:
+```
+sudo kubectl expose service monitoring-grafana \
+  --type=NodePort \
+  --target-port=3000 \
+  --name=grafana-nodeport \
+  -n monitoring
+```
+
+- Retrieve Grafana NodePort
+- Grafana is accessible on this port
+- Accordingly, add inbound rule to EC2 security group  
+```
+sudo kubectl get svc -n monitoring
+```
+
+#### Step 4: Access Grafana dashboard
+- Type in browser
+- Example:
+```
+http://<ELASTIC-IP>:30244
+```
+
+- Retrieve Grafana admin password
+
+Grafana login credentials:  
+| Field    | Value          |
+| -------- | -------------- |
+| Username | admin          |
+| Password | command output |
+
+```
+sudo kubectl get secret -n monitoring monitoring-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 --decode
+```
+
+---
