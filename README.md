@@ -60,7 +60,6 @@ http://localhost:8501
 
 ---
 
-
 ## Phase 2: EC2 Deployment + Containerization
 ### The objective of this phase is to deploy our application onto an EC2 instance so that it can be run on the cloud. We'll deploy the containerized version of our application. 
 #### Step 1: Creating and launching the EC2 instance
@@ -197,6 +196,7 @@ http://<EC2-IP>:8501
 
 #### Now our application is containerized and deployed on cloud using an EC2 instance. Cool :)
 
+---
 
 ## Phase 3: Jenkins Installation + Jenkins pipeline construction + Docker Hub integration
 ### Jenkins is an automation server used  for CI/CD pipelines, automated build and deployments.
@@ -342,6 +342,8 @@ docker build -t hsharma25/resumeiq:latest .
 ```
 docker push hsharma25/resumeiq:latest
 ```
+
+---
 
 ## Phase 4: Kubernetes Orchestration
 ### Docker alone can not handle automatic recovery, scaling, orchestration, cluster management etc.. Kubernetes solves this by managing containers, deployments, networking, self-healing and scaling. This phase focuses on installing Kubernetes, defining deployment and service manifests and integrating K8s with the Jenkins pipeline
@@ -534,3 +536,17 @@ Triggers:
 - old pod termination
 - new pod creation
 - deployment using latest Docker image
+
+---
+
+## Phase 5: Monitoring and Visualization with Prometheus and Grafana
+### The objective of this phase is to implement a complete monitoring and observability stack for the ResumeIQ Kubernetes infrastructure using Prometheus, Grafana, Helm and Kubernetes monitoring exporters
+#### Technologies used:
+| Technology         | Purpose                    |
+| ------------------ | -------------------------- |
+| Prometheus         | Metrics collection         |
+| Grafana            | Dashboard visualization    |
+| Helm               | Kubernetes package manager |
+| Node Exporter      | Node-level metrics         |
+| kube-state-metrics | Kubernetes object metrics  |
+
