@@ -675,3 +675,5 @@ sudo kubectl get secret -n monitoring monitoring-grafana \
 ```
 
 ---
+
+## Phase 6: 
