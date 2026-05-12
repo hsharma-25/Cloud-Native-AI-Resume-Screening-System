@@ -712,3 +712,5 @@ http://<ELASTIC-IP>:8080/github-webhook/
     - GitHub automatically sends webhook request
     - Jenkins pipeline starts automatically
     - No manual “Build Now” action is required
+    
+## Phase
