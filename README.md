@@ -26,6 +26,10 @@
     - [Step 2: Install kube-prometheus-stack](#step-2-install-kube-prometheus-stack)
     - [Step 3: Expose Grafana using NodePort](#step-3-expose-grafana-using-nodeport)
     - [Step 4: Access Grafana dashboard](#step-4-access-grafana-dashboard)
+- [Phase 6: Automated CI/CD using GitHub Webhooks and Jenkins](#phase-6-automated-cicd-using-github-webhooks-and-jenkins)
+    - [Step 1: Configure Jenkins](#step-1-configure-jenkins)
+    - [Step 2: Configure GitHub](#step-2-configure-github)
+    - [Step 3: Test pipeline](#step-3-test-pipeline)
 
 
 ## Phase 1: Docker
@@ -676,4 +680,35 @@ sudo kubectl get secret -n monitoring monitoring-grafana \
 
 ---
 
-## Phase 6: 
+## Phase 6: Automated CI/CD using GitHub Webhooks and Jenkins
+### The objective of this phase is to automate the CI/CD pipeline by integrating GitHub with Jenkins using webhooks. This phase automated the workflow so that every GitHub push event automatically triggered the Jenkins pipeline without manual intervention.
+#### What is a GitHub Webhook?
+A webhook is an event-driven HTTP callback mechanism.
+
+Whenever specific events occur inside a GitHub repository, GitHub automatically sends an HTTP POST request to Jenkins.
+
+In this project:
+- GitHub push event triggers Jenkins automatically
+- Jenkins then executed the CI/CD pipeline
+
+#### Step 1: Configure Jenkins
+- Inside Jenkins, configure the pipeline
+- Under "Build Triggers" check the option "GitHub hook trigger for GITScm polling"
+
+#### Step 2: Configure GitHub
+- Inside the respective GitHub repo
+- Go to settings -> webhooks -> add webhook
+- In the "Payload URL" field inside webhook configuration, add:
+```
+http://<ELASTIC-IP>:8080/github-webhook/
+```
+- For content type, select "application/json"
+- In events select option: "Just the push event"
+
+#### Step 3: Test pipeline
+- Save webhook
+- Push a small change to GitHub
+- After pushing code:
+    - GitHub automatically sends webhook request
+    - Jenkins pipeline starts automatically
+    - No manual “Build Now” action is required
