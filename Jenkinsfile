@@ -20,5 +20,13 @@ pipeline {
                 sh 'kubectl rollout restart deployment resumeiq-deployment'
             }
         }
+
+        stage('Notify Lambda') {
+            steps {
+                sh '''
+                curl -X POST https://YOUR-LAMBDA-URL
+                '''
+            }
+        }
     }
 }
