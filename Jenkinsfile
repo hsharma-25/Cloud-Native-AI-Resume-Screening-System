@@ -24,7 +24,7 @@ pipeline {
         stage('Notify Lambda') {
             steps {
                 sh '''
-                curl -X POST https://YOUR-LAMBDA-URL
+                curl -X POST https://gbdbxdzd33ljat4gd4cu34mohq0evozu.lambda-url.us-east-1.on.aws/
                 '''
             }
         }
