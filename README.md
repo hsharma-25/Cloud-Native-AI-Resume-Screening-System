@@ -681,7 +681,7 @@ sudo kubectl get secret -n monitoring monitoring-grafana \
 ---
 
 ## Phase 6: Automated CI/CD using GitHub Webhooks and Jenkins
-### The objective of this phase is to automate the CI/CD pipeline by integrating GitHub with Jenkins using webhooks. This phase automated the workflow so that every GitHub push event automatically triggered the Jenkins pipeline without manual intervention.
+### The objective of this phase is to automate the CI/CD pipeline by integrating GitHub with Jenkins using webhooks. This phase automates the workflow so that every GitHub push event automatically triggers the Jenkins pipeline without manual intervention.
 #### What is a GitHub Webhook?
 A webhook is an event-driven HTTP callback mechanism.
 
@@ -689,7 +689,7 @@ Whenever specific events occur inside a GitHub repository, GitHub automatically 
 
 In this project:
 - GitHub push event triggers Jenkins automatically
-- Jenkins then executed the CI/CD pipeline
+- Jenkins then executes the CI/CD pipeline
 
 #### Step 1: Configure Jenkins
 - Inside Jenkins, configure the pipeline
@@ -712,5 +712,3 @@ http://<ELASTIC-IP>:8080/github-webhook/
     - GitHub automatically sends webhook request
     - Jenkins pipeline starts automatically
     - No manual “Build Now” action is required
-    
-## Phase
