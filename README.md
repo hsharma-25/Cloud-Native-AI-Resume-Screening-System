@@ -368,20 +368,16 @@ pipeline {
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh 'docker stop resumeiq-container || true'
-                sh 'docker rm resumeiq-container || true'
+                sh 'kubectl apply -f k8s/deployment.yaml'
             }
         }
 
-        stage('Run New Container') {
+        stage('Notify Lambda') {
             steps {
                 sh '''
-                docker run -d \
-                    --name resumeiq-container \
-                    -p 8501:8501 \
-                    hsharma25/resumeiq:latest
+                curl -X POST https://gbdbxdzd33ljat4gd4cu34mohq0evozu.lambda-url.us-east-1.on.aws/
                 '''
             }
         }
@@ -463,7 +459,7 @@ metadata:
   name: resumeiq-deployment
 
 spec:
-  replicas: 1
+  replicas: 3
 
   selector:
     matchLabels:
