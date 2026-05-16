@@ -31,6 +31,24 @@
     - [Step 2: Configure GitHub](#step-2-configure-github)
     - [Step 3: Test pipeline](#step-3-test-pipeline)
 
+---
+
+## System Architecture
+![ResumeIQ Architecture](images/architecture.png)
+
+### Tech Stack
+| Layer            | Technology          |
+| ---------------- | ------------------- |
+| Source Control   | GitHub              |
+| CI/CD            | Jenkins             |
+| Containerization | Docker              |
+| Registry         | Docker Hub          |
+| Orchestration    | Kubernetes (K3s)    |
+| Monitoring       | Prometheus, Grafana |
+| Notifications    | AWS Lambda          |
+| Cloud            | AWS EC2             |
+
+---
 
 ## Phase 1: Docker
 ### Docker helps in containerizing an application which ensures that the application runs consistently across different environments such as local machines, cloud servers, CI/CD pipelines, and Kubernetes clusters.
