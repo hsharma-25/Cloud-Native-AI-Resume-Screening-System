@@ -1,4 +1,24 @@
+# Cloud-Native AI Resume Screening System
+The project follows a **cloud-native DevOps architecture** where application changes pushed to GitHub automatically trigger a **Jenkins CI/CD** pipeline through GitHub Webhooks.
+
+The pipeline performs:
+
+- Source code checkout
+- Docker image build
+- Docker image push to Docker Hub
+- Kubernetes deployment update
+- AWS Lambda deployment notification
+
+The ResumeIQ application is deployed on a **Kubernetes (K3s)** cluster hosted on **AWS EC2**, while **Prometheus** and **Grafana** provide monitoring and observability for the infrastructure and application workloads.  
+
+Below, follows a step by step implementation guide for the same with each command and its purpose explained.  
+
+Happy Learning :)
+
+---
+
 ## Contents
+- [System Architecture](#system-architecture)
 - [Phase 1: Docker](#phase-1-docker)  
     - [Step 1: The Dockerfile and .dockerignore](#step-1-the-dockerfile-and-dockerignore)  
     - [Step 2: Building the Docker image](#step-2-building-the-docker-image)
