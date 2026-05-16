@@ -411,6 +411,8 @@ docker build -t hsharma25/resumeiq:latest .
 docker push hsharma25/resumeiq:latest
 ```
 
+### Pipeline Graph View
+![Jenkins-pipeline](images/jenkins_pipeline.png)
 ---
 
 ## Phase 4: Kubernetes Orchestration
@@ -712,6 +714,8 @@ sudo kubectl get secret -n monitoring monitoring-grafana \
   -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
 
+### Grafana Dashboard
+![grafana-dashboard](images/grafana_dashboard.png)
 ---
 
 ## Phase 6: Automated CI/CD using GitHub Webhooks and Jenkins
@@ -746,3 +750,85 @@ http://<ELASTIC-IP>:8080/github-webhook/
     - GitHub automatically sends webhook request
     - Jenkins pipeline starts automatically
     - No manual “Build Now” action is required
+
+---
+
+## Phase 7: AWS Lambda Notifier Integration
+### AWS Lambda is a serverless compute service that allows code execution without managing servers or infrastructure. 
+### The objective of this phase is to integrate serverless event-driven functionality into the CI/CD pipeline using AWS Lambda. Integrate AWS Lambda to automatically trigger deployment notifications whenever the Jenkins pipeline completes successfully.
+
+#### Step 1: Create Lambda Function
+- Open AWS Console
+- Navigate to: AWS Lambda -> Create function
+- Select: author from scratch
+
+Configuration used:
+| Field         | Value                        |
+| ------------- | ---------------------------- |
+| Function Name | resumeiq-deployment-notifier |
+| Runtime       | Python 3.12                  |
+| Architecture  | x86_64                       |
+
+#### Step 2: Write function code
+Purpose of the Lambda function:
+
+- Receives deployment trigger from Jenkins
+- Logs deployment activity
+- Returns deployment response
+- Demonstrates serverless integration
+
+Code:
+```
+import json
+from datetime import datetime
+
+def lambda_handler(event, context):
+
+    print("ResumeIQ deployment completed successfully via Jenkins CI/CD pipeline")
+
+    response = {
+        "application": "ResumeIQ",
+        "status": "Deployment Successful",
+        "timestamp": str(datetime.now())
+    }
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response)
+    }
+```
+
+#### Step 3: Create Lambda Function URL
+Why Function URL?
+- Lambda Function URL exposes the Lambda function through a public HTTPS endpoint.
+- This allows Jenkins to invoke Lambda directly using HTTP requests.
+- Inside Lambda: Configuration → Function URL → Create Function URL
+
+Configuration used:
+| Field     | Value    |
+| --------- | -------- |
+| Auth Type | NONE     |
+| CORS      | Disabled |
+
+#### Step 4: Integrate Lambda with Jenkins Pipeline
+- Update Jenkins to trigger Lambda automatically after deployment completion.
+- The following stage was added to the Jenkinsfile:
+
+Purpose:
+- Sends HTTP POST request to Lambda
+- Triggers serverless deployment notification
+- Integrates event-driven architecture into CI/CD pipeline
+```
+stage('Notify Lambda') {
+    steps {
+        sh '''
+        curl -X POST https://gbdbxdzd33ljat4gd4cu34mohq0evozu.lambda-url.us-east-1.on.aws/
+        '''
+    }
+}
+```
+
+#### Step 5: Verify Lambda execution
+- Every Lambda execution automatically generates logs inside AWS CloudWatch
+- To verify successful execution: AWS Lambda -> Monitor -> View CloudWatch Logs
+![Lambda-Notifier-CloudWatch-Logs](images/lambda_logs.png)
