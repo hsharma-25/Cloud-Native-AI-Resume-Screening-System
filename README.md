@@ -1,5 +1,5 @@
 # Cloud-Native AI Resume Screening System
-The project follows a **cloud-native DevOps architecture** where application changes pushed to GitHub automatically trigger a **Jenkins CI/CD** pipeline through GitHub Webhooks.
+The project follows a **cloud-native DevOps architecture** where application changes pushed to GitHub automatically trigger a **Jenkins CI/CD** pipeline through **GitHub Webhooks**.
 
 The pipeline performs:
 
