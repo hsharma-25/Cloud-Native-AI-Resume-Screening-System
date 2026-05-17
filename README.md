@@ -74,6 +74,7 @@ Happy Learning :)
 | Containerization | Docker              |
 | Registry         | Docker Hub          |
 | Orchestration    | Kubernetes (K3s)    |
+| IaC              | Terraform           |
 | Monitoring       | Prometheus, Grafana |
 | Notifications    | AWS Lambda          |
 | Cloud            | AWS EC2             |
