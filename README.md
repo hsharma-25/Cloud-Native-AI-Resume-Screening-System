@@ -44,10 +44,7 @@ Happy Learning :)
 - [Phase 5: Infrastructure as Code using Terraform](#phase-5-infrastructure-as-code-using-terraform)
     - [Step 1: Install Terraform](#step-1-install-terraform)
     - [Step 2: Create Terraform configuration](#step-2-create-terraform-configuration)
-    - [Step 3: Initialize Terraform](#step-3-initialize-terraform)
-    - [Step 4: Validate and preview infrastructure](#step-4-validate-and-preview-infrastructure)
-    - [Step 5: Provision infrastructure](#step-5-provision-infrastructure)
-    - [Step 6: Destroy infrastructure](#step-6-destroy-infrastructure)
+    - [Step 3: Initialize, Validate, Provision Infrastructure](#step-3-initialize-validate-provision-infrastructure)
 - [Phase 6: Monitoring and Visualization with Prometheus and Grafana](#phase-6-monitoring-and-visualization-with-prometheus-and-grafana)
     - [Step 1: Install Helm](#step-1-install-helm)
     - [Step 2: Install kube-prometheus-stack](#step-2-install-kube-prometheus-stack)
@@ -622,10 +619,130 @@ Triggers:
 
 ---
 
-## Phase 7: Infrastructure as Code using Terraform
+## Phase 5: Infrastructure as Code using Terraform
 ### The objective of this phase is to automate infrastructure provisioning using Terraform. Terraform enables Infrastructure-as-Code (IaC), allowing cloud infrastructure to be defined declaratively through configuration files instead of manual provisioning.
 
-#### Step 1: 
+#### Step 1: Install Terraform
+
+```
+sudo apt update
+sudo apt install -y gnupg software-properties-common
+```
+- Add HashiCorp GPG key
+```
+ wget -O- https://apt.releases.hashicorp.com/gpg | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+```
+- Add Terraform repository
+```
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+sudo tee /etc/apt/sources.list.d/hashicorp.list
+```
+- Install Terraform
+```
+sudo apt update
+sudo apt install terraform -y
+```
+
+#### Step 2: Create Terraform configuration
+#### Terraform infrastructure resources are defined inside the main.tf file.
+Resources configured:
+- AWS provider
+- EC2 instance
+- Security Group
+- Storage configuration
+
+The **main.tf** file:
+```
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_security_group" "resumeiq_sg" {
+  name        = "resumeiq-security-group"
+  description = "Security group for ResumeIQ DevOps project"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 30007
+    to_port     = 30007
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 30244
+    to_port     = 30244
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8501
+    to_port     = 8501
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "resumeiq_server" {
+  ami           = "ami-0c02fb55956c7d316"
+  instance_type = "m7i-flex.large"
+
+  root_block_device {
+    volume_size = 50
+    volume_type = "gp3"
+  }
+
+  vpc_security_group_ids = [aws_security_group.resumeiq_sg.id]
+
+  tags = {
+    Name = "ResumeIQ-DevOps-Server"
+  }
+}
+```
+
+#### Step 3: Initialize, Validate, Provision Infrastructure
+
+- Intialize terraform
+```
+terraform init
+```
+- Validate infrastructure
+```
+terraform validate
+```
+- Preview infrastructure changes
+```
+terraform plan
+```
+- Provision infrastructure
+- Terraform automatically provisions AWS infrastructure resources.
+```
+terraform apply
+```
 ---
 
 ## Phase 6: Monitoring and Visualization with Prometheus and Grafana

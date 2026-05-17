@@ -53,6 +53,11 @@ resource "aws_instance" "resumeiq_server" {
   ami           = "ami-0c02fb55956c7d316"
   instance_type = "m7i-flex.large"
 
+  root_block_device {
+    volume_size = 50
+    volume_type = "gp3"
+  }
+
   vpc_security_group_ids = [aws_security_group.resumeiq_sg.id]
 
   tags = {
