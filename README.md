@@ -41,15 +41,28 @@ Happy Learning :)
     - [Step 3: Kubernetes service](#step-3-kubernetes-service)
     - [Step 4: Deploy kubernetes resources](#step-4-deploy-kubernetes-resources)
     - [Step 5: Jenkins and Kubernetes integration](#step-5-jenkins-and-kubernetes-integration)
-- [Phase 5: Monitoring and Visualization with Prometheus and Grafana](#phase-5-monitoring-and-visualization-with-prometheus-and-grafana)
+- [Phase 5: Infrastructure as Code using Terraform](#phase-5-infrastructure-as-code-using-terraform)
+    - [Step 1: Install Terraform](#step-1-install-terraform)
+    - [Step 2: Create Terraform configuration](#step-2-create-terraform-configuration)
+    - [Step 3: Initialize Terraform](#step-3-initialize-terraform)
+    - [Step 4: Validate and preview infrastructure](#step-4-validate-and-preview-infrastructure)
+    - [Step 5: Provision infrastructure](#step-5-provision-infrastructure)
+    - [Step 6: Destroy infrastructure](#step-6-destroy-infrastructure)
+- [Phase 6: Monitoring and Visualization with Prometheus and Grafana](#phase-6-monitoring-and-visualization-with-prometheus-and-grafana)
     - [Step 1: Install Helm](#step-1-install-helm)
     - [Step 2: Install kube-prometheus-stack](#step-2-install-kube-prometheus-stack)
     - [Step 3: Expose Grafana using NodePort](#step-3-expose-grafana-using-nodeport)
     - [Step 4: Access Grafana dashboard](#step-4-access-grafana-dashboard)
-- [Phase 6: Automated CI/CD using GitHub Webhooks and Jenkins](#phase-6-automated-cicd-using-github-webhooks-and-jenkins)
+- [Phase 7: Automated CI/CD using GitHub Webhooks and Jenkins](#phase-7-automated-cicd-using-github-webhooks-and-jenkins)
     - [Step 1: Configure Jenkins](#step-1-configure-jenkins)
     - [Step 2: Configure GitHub](#step-2-configure-github)
     - [Step 3: Test pipeline](#step-3-test-pipeline)
+- [Phase 8: AWS Lambda Notifier Integration](#phase-8-aws-lambda-notifier-integration)
+    - [Step 1: Create Lambda Function](#step-1-create-lambda-function)
+    - [Step 2: Write function code](#step-2-write-function-code)
+    - [Step 3: Create Lambda function URL](#step-3-create-lambda-function-url)
+    - [Step 4: Integrate Lambda with Jenkins pipeline](#step-4-integrate-lambda-with-jenkins-pipeline)
+    - [Step 5: Verify Lambda execution](#step-5-verify-lambda-execution)
 
 ---
 
@@ -609,7 +622,13 @@ Triggers:
 
 ---
 
-## Phase 5: Monitoring and Visualization with Prometheus and Grafana
+## Phase 7: Infrastructure as Code using Terraform
+### The objective of this phase is to automate infrastructure provisioning using Terraform. Terraform enables Infrastructure-as-Code (IaC), allowing cloud infrastructure to be defined declaratively through configuration files instead of manual provisioning.
+
+#### Step 1: 
+---
+
+## Phase 6: Monitoring and Visualization with Prometheus and Grafana
 ### The objective of this phase is to implement a complete monitoring and observability stack for the ResumeIQ Kubernetes infrastructure using Prometheus, Grafana, Helm and Kubernetes monitoring exporters
 #### Technologies used:
 | Technology         | Purpose                    |
@@ -718,7 +737,7 @@ sudo kubectl get secret -n monitoring monitoring-grafana \
 ![grafana-dashboard](images/grafana_dashboard.png)
 ---
 
-## Phase 6: Automated CI/CD using GitHub Webhooks and Jenkins
+## Phase 7: Automated CI/CD using GitHub Webhooks and Jenkins
 ### The objective of this phase is to automate the CI/CD pipeline by integrating GitHub with Jenkins using webhooks. This phase automates the workflow so that every GitHub push event automatically triggers the Jenkins pipeline without manual intervention.
 #### What is a GitHub Webhook?
 A webhook is an event-driven HTTP callback mechanism.
@@ -753,7 +772,7 @@ http://<ELASTIC-IP>:8080/github-webhook/
 
 ---
 
-## Phase 7: AWS Lambda Notifier Integration
+## Phase 8: AWS Lambda Notifier Integration
 ### AWS Lambda is a serverless compute service that allows code execution without managing servers or infrastructure. 
 ### The objective of this phase is to integrate serverless event-driven functionality into the CI/CD pipeline using AWS Lambda. Integrate AWS Lambda to automatically trigger deployment notifications whenever the Jenkins pipeline completes successfully.
 
