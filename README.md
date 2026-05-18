@@ -1,4 +1,15 @@
 # Cloud-Native AI Resume Screening System
+
+![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-K3s-326CE5?logo=kubernetes&logoColor=white)
+![Jenkins](https://img.shields.io/badge/Jenkins-CI%2FCD-D24939?logo=jenkins&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-Cloud-FF9900?logo=amazonaws&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C?logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800?logo=grafana&logoColor=white)
+
+The project follows a **cloud-native DevOps architecture**...
+
 The project follows a **cloud-native DevOps architecture** where application changes pushed to GitHub automatically trigger a **Jenkins CI/CD** pipeline through **GitHub Webhooks**.
 
 The pipeline performs:
@@ -10,6 +21,18 @@ The pipeline performs:
 - AWS Lambda deployment notification
 
 The ResumeIQ application is deployed on a **Kubernetes (K3s)** cluster hosted on **AWS EC2**, while **Prometheus** and **Grafana** provide monitoring and observability for the infrastructure and application workloads.  
+
+## Project Highlights
+
+- AI-powered semantic resume screening system
+- Fully automated CI/CD pipeline using Jenkins
+- Docker-based containerized deployment
+- Kubernetes orchestration using K3s
+- Infrastructure provisioning using Terraform
+- Monitoring and observability using Prometheus and Grafana
+- Event-driven AWS Lambda integration
+- GitHub webhook automation
+- Cloud-native deployment on AWS EC2
 
 Below, follows a step by step implementation guide for the same with each command and its purpose explained.  
 
@@ -396,12 +419,12 @@ pipeline {
 }
 ```
 Pipeline stage explanation:
-| Stage              | Purpose                      |
-| ------------------ | ---------------------------- |
-| Build Docker Image | Creates updated Docker image |
-| Push Docker Image  | Uploads image to Docker Hub  |
-| Stop Old Container | Removes previous deployment  |
-| Run New Container  | Deploys latest application   |
+| Stage                | Purpose                          |
+| -------------------- | -------------------------------- |
+| Build Docker Image   | Creates updated image            |
+| Push Docker Image    | Uploads image to Docker Hub      |
+| Deploy to Kubernetes | Updates Kubernetes deployment    |
+| Notify Lambda        | Triggers deployment notification |
 
 - Click on "Build Now" in jenkins to start the whole process
 - Observe the console to see how each step is executed
@@ -603,7 +626,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl rollout restart deployment resumeiq-deployment'
+                sh 'kubectl apply -f k8s/deployment.yaml'
             }
         }
     }
