@@ -33,6 +33,8 @@ The ResumeIQ application is deployed on a **Kubernetes (K3s)** cluster hosted on
 - GitHub webhook automation
 - Cloud-native deployment on AWS EC2
 
+The site is [live](http://13.223.250.12:30007)
+
 Below, follows a step by step implementation guide for the same with each command and its purpose explained.  
 
 Happy Learning :)
@@ -271,7 +273,7 @@ Dockerfile explanation:
 
 
 An extra index was used:
-```
+```bash
 --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 The purpose:
@@ -287,10 +289,10 @@ The .dockerignore file:
 
 Building the Docker image and running the Docker container
 - Use the same commands we used for local containerization
-```
+```bash
 docker build -t resumeiq .
 ```
-```
+```bash
 docker run -d --name resumeiq-container -p 8501:8501 resumeiq
 ```
 To access the application which is now running on the EC2 instance  
@@ -308,11 +310,11 @@ http://<EC2-IP>:8501
 #### Step 1: Install Java and add Jenkins repository
 #### Java runtime is required for running Jenkins. 
 - Install Java
-```
+```bash
 sudo apt install openjdk-21-jdk -y
 ```
 - Add Jenkins GPG key
-```
+```bash
 curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key | sudo tee \
   /usr/share/keyrings/jenkins-keyring.asc > /dev/null
 ```
@@ -325,7 +327,7 @@ Why?
     - apt will not trust the Jenkins packages.
 
 - Add Jenkins repository
-```
+```bash
 echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
   https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
   /etc/apt/sources.list.d/jenkins.list > /dev/null
@@ -338,26 +340,26 @@ Why?
 
 #### Step 2: Install Jenkins
 - Update apt
-```
+```bash
 sudo apt update 
 ```
 - Install Jenkins
-```
+```bash
 sudo apt install jenkins -y
 ```
 - Start and enable jenkins
-```
+```bash
 sudo systemctl start jenkins
 sudo systemctl enable jenkins
 ```
 
 #### Step 3: Further Jenkins setup through Jenkins UI
 - Access Jenkins through browser
-```
+```bash
 http://<EC2-IP>:8080
 ```
 - Retrieve initial admin password
-```
+```bash
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 ```
 - On next step, click on intall suggested plug-ins
@@ -365,15 +367,15 @@ sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 Jenkins-Docker integration
 - Jenkins runs under jenkins user
 - This user requires Docker permissions
-```
+```bash
 sudo usermod -aG docker jenkins
 ```
 - To apply new permissions, restart jenkins
-```
+```bash
 sudo systemctl restart jenkins
 ```
 - Verify Docker access
-```
+```bash
 sudo su - jenkins
 docker ps
 ```
@@ -383,7 +385,7 @@ docker ps
 #### The new job in Jenkins was created as a pipeline. In this method, the complete pipeline is defined as code in a file called Jenkinsfile. Futher we perform SCM (Source Code Management) integration to connect the jenkins pipeline to our GitHub repo.
 - Create the jenkinsfile
 - Push file to repo
-```
+```groovy
 pipeline {
     agent any
 
@@ -432,15 +434,15 @@ Pipeline stage explanation:
 #### Step 5: Integrating Docker Hub
 #### Similar to how GitHub stores source code, Docker Hub is a container registry to store images. From now on, Jenkins will build image -> push it to Docker Hub and deployments will pull image from Docker Hub when required
 - On EC2, log in to Docker hub
-```
+```bash
 docker login
 ```
 - Build tagged image
-```
+```bash
 docker build -t hsharma25/resumeiq:latest .
 ```
 - Push image to Docker hub
-```
+```bash
 docker push hsharma25/resumeiq:latest
 ```
 
@@ -454,12 +456,12 @@ docker push hsharma25/resumeiq:latest
 #### Step 1: Install K3s
 #### We'll continue by integrating Kubernetes through K3s. Other methods like using minikube could have been used, but K3s proves to be a better option sice it provides lower RAM usage, lower CPU overhead, and fewer operational issues. 
 - Stop and remove current running container
-```
+```bash
 docker stop resumeiq-container
 docker rm resumeiq-container
 ```
 - Install K3s
-```
+```bash
 curl -sfL https://get.k3s.io | sh -
 ```
 K3s installs:
@@ -471,11 +473,11 @@ K3s installs:
 - kubectl  
   
 Verify K3s service
-```
+```bash
 sudo systemctl status k3s
 ```
 Verify Kubernetes nodes
-```
+```bash
 sudo kubectl get nodes
 ```
 Purpose:
@@ -486,7 +488,7 @@ Purpose:
 #### Kubernetes uses declarative infrastructure instead of manually running containers. The desired infrastructure state is defined through YAML manifests, particularly the deployment.yaml file. Kubernetes continuously ensures actual system state matches declared state.
 
 - Create the deployment.yaml file 
-```
+```yml
 apiVersion: apps/v1
 kind: Deployment
 
@@ -531,7 +533,7 @@ Explanation:
 #### Step 3: Kubernetes service
 #### K8s service ensures consistent networking and load balancing. All required states are defined in the service.yaml file
 - Create service.yaml file
-```
+```yml
 apiVersion: v1
 kind: Service
 
@@ -561,11 +563,11 @@ Explanation:
 
 #### Step 4: Deploy kubernetes resources
 - Apply deployment
-```
+```bash
 sudo kubectl apply -f k8s/deployment.yaml
 ```
 - Apply service
-```
+```bash
 sudo kubectl apply -f k8s/service.yaml
 ```
 - Access the application using
@@ -579,7 +581,7 @@ http://<ELASTIC-IP>:30007
 - For this, we need to update the Kubernetes configuration file
 - The file is stored at ```/etc/rancher/k3s/k3s.yaml```
 - Copy kubernetes congig for Jenkins
-```
+```bash
 sudo cp /etc/rancher/k3s/k3s.yaml /var/lib/jenkins/kubeconfig
 ```
 - Configure KUBECONFIG environment variable
@@ -593,19 +595,19 @@ Environment="KUBECONFIG=/var/lib/jenkins/kubeconfig"
 - "KUBECONFIG"environment variable tells kubectl which Kubernetes configuration file to use
 - Without this, Jenkins cannot communicate with Kubernetes cluster.
 - Reload Jenkins service
-```
+```bash
 sudo systemctl daemon-reload
 sudo systemctl restart jenkins
 ```
 - Confirm Jenkins-Kubernetes integration 
-```
+```bash
 sudo su - jenkins
 kubectl get nodes
 ```
 - Confirms Jenkins user can access Kubernetes cluster  
 
 **Important**: Update the old Jenkins pipeline:
-```
+```groovy
 pipeline {
     agent any
 
@@ -632,7 +634,7 @@ pipeline {
 }
 ```
 The line:
-```
+```bash
 kubectl rollout restart deployment resumeiq-deployment
 ```
 Triggers:
@@ -647,24 +649,24 @@ Triggers:
 
 #### Step 1: Install Terraform
 
-```
+```bash
 sudo apt update
 sudo apt install -y gnupg software-properties-common
 ```
 - Add HashiCorp GPG key
-```
+```bash
  wget -O- https://apt.releases.hashicorp.com/gpg | \
 gpg --dearmor | \
 sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
 ```
 - Add Terraform repository
-```
+```bash
 echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
 https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
 sudo tee /etc/apt/sources.list.d/hashicorp.list
 ```
 - Install Terraform
-```
+```bash
 sudo apt update
 sudo apt install terraform -y
 ```
@@ -678,7 +680,7 @@ Resources configured:
 - Storage configuration
 
 The **main.tf** file:
-```
+```terraform
 provider "aws" {
   region = "us-east-1"
 }
@@ -750,20 +752,20 @@ resource "aws_instance" "resumeiq_server" {
 #### Step 3: Initialize, Validate, Provision Infrastructure
 
 - Intialize terraform
-```
+```bash
 terraform init
 ```
 - Validate infrastructure
-```
+```bash
 terraform validate
 ```
 - Preview infrastructure changes
-```
+```bash
 terraform plan
 ```
 - Provision infrastructure
 - Terraform automatically provisions AWS infrastructure resources.
-```
+```bash
 terraform apply
 ```
 ---
@@ -782,17 +784,17 @@ terraform apply
 #### Step 1: Install Helm
 #### What is Helm?
 Helm is a package manager for Kubernetes. It simplifies Kubernetes application deployment using Helm Charts. A Helm chart is a pre-configured Kubernetes application template.
-```
+```bash
 curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 ```
 - Add Prometheus Helm repository. 
 - Purpose: adds official Prometheus Helm chart repository
-```
+```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ```
 - Update Helm repositories
 - Purpose: downloads latest Helm chart metadata
-```
+```bash
 helm repo update
 ```
 
@@ -807,7 +809,7 @@ Examples:
 - monitoring
 
 This improves organization and resource management.
-```
+```bash
 sudo kubectl create namespace monitoring
 ```
 
@@ -820,25 +822,25 @@ Components installed:
 - Alertmanager
 - Node Exporter
 - kube-state-metrics
-```
+```bash
 KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm install monitoring prometheus-community/kube-prometheus-stack --namespace monitoring
 ```
 
 - Verify monitoring pods
 - Checks monitoring stack deployment
-```
+```bash
 sudo kubectl get pods -n monitoring
 ```
 
 - Verify monitoring services
-```
+```bash
 sudo kubectl get svc -n monitoring
 ```
 
 #### Step 3: Expose Grafana using NodePort
 #### Grafana is initially accessible only inside the Kubernetes cluster. To access Grafana externally, a NodePort service was created.
 - Command:
-```
+```bash
 sudo kubectl expose service monitoring-grafana \
   --type=NodePort \
   --target-port=3000 \
@@ -849,7 +851,7 @@ sudo kubectl expose service monitoring-grafana \
 - Retrieve Grafana NodePort
 - Grafana is accessible on this port
 - Accordingly, add inbound rule to EC2 security group  
-```
+```bash
 sudo kubectl get svc -n monitoring
 ```
 
@@ -868,7 +870,7 @@ Grafana login credentials:
 | Username | admin          |
 | Password | command output |
 
-```
+```bash
 sudo kubectl get secret -n monitoring monitoring-grafana \
   -o jsonpath="{.data.admin-password}" | base64 --decode
 ```
@@ -937,7 +939,7 @@ Purpose of the Lambda function:
 - Demonstrates serverless integration
 
 Code:
-```
+```python
 import json
 from datetime import datetime
 
@@ -977,7 +979,7 @@ Purpose:
 - Sends HTTP POST request to Lambda
 - Triggers serverless deployment notification
 - Integrates event-driven architecture into CI/CD pipeline
-```
+```groovy
 stage('Notify Lambda') {
     steps {
         sh '''
