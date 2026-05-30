@@ -33,7 +33,7 @@ The ResumeIQ application is deployed on a **Kubernetes (K3s)** cluster hosted on
 - GitHub webhook automation
 - Cloud-native deployment on AWS EC2
 
-<!-- The site is [live](http://13.223.250.12:30007) -->
+<!-- `The site is [live](http://13.223.250.12:30007)` -->
 
 Below, follows a step by step implementation guide for the same with each command and its purpose explained.  
 
